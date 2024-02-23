@@ -22,7 +22,7 @@ def buildApp() {
 def buildImage() {
     echo "building the docker image..."
     env.IMAGE_NAME = "ismailsdockers/java-maven-app"
-    sh "docker build -t $IMAGE_NAME:$IMAGE_VERSION"
+    sh "docker build -t $IMAGE_NAME:$IMAGE_VERSION ."
     sh "docker tag $IMAGE_NAME:$IMAGE_VERSION $IMAGE_NAME:latest"
 }
 
@@ -44,9 +44,14 @@ def pushImage() {
 def deploy() {
     echo "deploying docker image to AWS EKS..."
     
-
-    sh "envsubst < kubernetes/deployment.yaml | kubectl apply -f -"
-    sh "envsubst < kubernetes/service.yaml | kubectl apply -f -"
+    withCredentials([[
+        $class: 'AmazonWebServicesCredentialsBinding',
+        credentialsId: 'aws-credentials'
+    ]]) {
+        sh "aws eks update-kubeconfig eks-cluster-1"
+        sh "envsubst < kubernetes/deployment.yaml | kubectl apply -f -"
+        sh "envsubst < kubernetes/service.yaml | kubectl apply -f -"
+    }
 }
 
 def versionBump() {

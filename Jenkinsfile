@@ -82,6 +82,7 @@ pipeline {
             }
             environment {
                 APP_NAME = "java-maven-app"
+                AWS_DEFAULT_REGION = 'us-east-2'
             }
             steps {
                 script {
