@@ -49,7 +49,7 @@ def deploy() {
         credentialsId: 'aws-credentials',
         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
     )]) {
-        sh "aws eks update-kubeconfig eks-cluster-1"
+        sh "aws eks update-kubeconfig --name eks-cluster-1"
         sh "kubectl get nodes"
         // sh "envsubst < kubernetes/deployment.yaml | kubectl apply -f -"
         // sh "envsubst < kubernetes/service.yaml | kubectl apply -f -"
